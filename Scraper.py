@@ -1,11 +1,13 @@
-import os
+import re
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from datetime import datetime, timedelta
-from apple_calendar_integration import ICloudCalendarAPI
+from Writer import *
+
 url = "https://maya.um.edu.my/sitsvision/wrd/siw_lgn"
 username = "22052697"
 password = "Z2mzz3fx@2022"
+iusername = "junxiansean8@gmail.com"
+ipassword = "Junx1@nn3v3rd13"
 # username = input("Username: ")
 # password = input("Password: ")
 class_data = []
@@ -23,7 +25,10 @@ driver.find_element(By.NAME, "BP102.DUMMY_B.MENSYS").click()
 classes = driver.find_element(By.CLASS_NAME, "sitsjqttitems").find_elements(By.TAG_NAME,"li")
 for Class in classes:
     data = Class.text.splitlines()
+    string = Class.get_attribute("tt-tooltip")
+    m = re.search(r'[A-Za-z]{3}\.', string)
     data_json = {
+        "date": m.group(0).strip("."),
         "time": data[1],
         "occurrence": data[2],
         "code": data[3],
