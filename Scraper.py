@@ -42,5 +42,5 @@ for Class in classes:
 driver.quit()
 
 print(class_data)
-
-
+for data in class_data:
+    write(iusername, ipassword, data["date"], data["time"], data["occurrence"], data["code"], data["room"], data["lecturer"])
