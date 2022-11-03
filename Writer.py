@@ -1,25 +1,35 @@
 from apple_calendar_integration import *
+from icalendar import Calendar, Event, vText, Alarm
 from datetime import datetime, timedelta
 
 def write(username, password, edate, time, occurence, code, room, lecturer):
-    api = ICloudCalendarAPI(username, password)
     Duration = time.split(" - ")
     Starttime = datetime.strptime(Duration[0], '%H:%M').time()
     Endtime = datetime.strptime(Duration[1], '%H:%M').time()
     start_date = date(weekday(edate))
     startdatetime = datetime.combine(start_date, Starttime)
     enddatetime = datetime.combine(start_date, Endtime)
-    
-    alarm = {
-        "before": False,
-        "hours": 1,
-        "minutes": 15,
-        "days": 1
-    }
 
-    note = "Room: " + room + "\nLecturer: " + lecturer + "\nOccurence: " + occurence
+    Class = Event()
+    Class.add('summary', code)
+    Class.add('description', "Lecturer: " + lecturer + "\nOccurence: " + occurence)
+    Class.add('dtstart', startdatetime)
+    Class.add('dtend', enddatetime)
+    Class['location'] = vText(room)
 
-    etag, ctag, guid = api.create_event(code, startdatetime, enddatetime, alarm=alarm, note=note)
+    alarm1 = Alarm()
+    alarm1.add('action', 'DISPLAY')
+    alert_time1 = timedelta(minutes=-int(15))
+    alarm1.add('trigger', alert_time1)
+    Class.add_component(alarm1)
+
+    alarm2 = Alarm()
+    alarm2.add('action', 'DISPLAY')
+    alert_time2 = timedelta(hours=-int(1))
+    alarm2.add('trigger', alert_time2)
+    Class.add_component(alarm2)
+
+    return Class
 
 def weekday(weekday):
     if weekday == "Mon":
@@ -42,6 +52,3 @@ def date(weekday):
     day = now - (timedelta(days = now.weekday()) - (timedelta(days = weekday)))
     date = day.date()
     return date
-
-
-

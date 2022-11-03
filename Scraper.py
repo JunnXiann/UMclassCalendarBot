@@ -1,15 +1,15 @@
 import re
+import os
+import getpass
+import subprocess
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from Writer import *
 
 url = "https://maya.um.edu.my/sitsvision/wrd/siw_lgn"
-username = "22052697"
-password = "Z2mzz3fx@2022"
-iusername = "junxiansean8@gmail.com"
-ipassword = "Junx1@nn3v3rd13"
-# username = input("Username: ")
-# password = input("Password: ")
+print("Please enter your MAYA credentials: ")
+username = input("Username: ")
+password = getpass.getpass("Password: ")
 class_data = []
 
 driverPath = "./chromedriver"
@@ -30,8 +30,8 @@ for Class in classes:
     data_json = {
         "date": m.group(0).strip("."),
         "time": data[1],
-        "occurrence": data[2],
-        "code": data[3],
+        "occurrence": data[2].strip("Occurence: "),
+        "code": data[3].strip("Code: "),
         "semester": data[4],
         "type": data[5],
         "campus": data[6],
@@ -41,6 +41,12 @@ for Class in classes:
     class_data.append(data_json)
 driver.quit()
 
-print(class_data)
+cal = Calendar()
+
 for data in class_data:
-    write(iusername, ipassword, data["date"], data["time"], data["occurrence"], data["code"], data["room"], data["lecturer"])
+    cal.add_component(write(username, password, data["date"], data["time"], data["occurrence"], data["code"], data["room"], data["lecturer"]))
+
+directory = './'
+f = open(os.path.join(directory, 'class.ics'), 'wb')
+f.write(cal.to_ical())
+f.close()
