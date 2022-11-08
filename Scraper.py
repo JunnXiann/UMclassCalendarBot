@@ -46,7 +46,7 @@ cal = Calendar()
 for data in class_data:
     cal.add_component(write(username, password, data["date"], data["time"], data["occurrence"], data["code"], data["room"], data["lecturer"]))
 
-directory = './'
+directory = '/Users/junxian/Desktop'
 f = open(os.path.join(directory, 'class.ics'), 'wb')
 f.write(cal.to_ical())
 f.close()
